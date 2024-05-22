@@ -29,6 +29,25 @@ func countBytes(files []string) error {
 		total += n
 		fmt.Println(fmt.Sprintf("%d %s", n, f))
 	}
-	fmt.Println(fmt.Sprintf("%d total", total))
+	if len(files) > 1 {
+		fmt.Println(fmt.Sprintf("%d total", total))
+	}
+	return nil
+}
+
+func countLines(files []string) error {
+	var total int
+	for _, f := range files {
+		bytes, err := os.ReadFile(f)
+		if err != nil {
+			panic(err)
+		}
+		n := len(bytes)
+		total += n
+		fmt.Println(fmt.Sprintf("%d %s", n, f))
+	}
+	if len(files) > 1 {
+		fmt.Println(fmt.Sprintf("%d total", total))
+	}
 	return nil
 }
