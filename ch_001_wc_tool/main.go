@@ -18,7 +18,7 @@ func main() {
 	}
 }
 
-func countBytes(files []string) {
+func countBytes(files []string) error {
 	var total int
 	for _, f := range files {
 		bytes, err := os.ReadFile(f)
@@ -30,4 +30,5 @@ func countBytes(files []string) {
 		fmt.Println(fmt.Sprintf("%d %s", n, f))
 	}
 	fmt.Println(fmt.Sprintf("%d total", total))
+	return nil
 }
