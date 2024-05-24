@@ -58,8 +58,8 @@ func TestLineCount(t *testing.T) {
 	files := []string{"emptyfile.txt", "testfile1.txt", "testfile2.txt"}
 	contents := [][]byte{
 		[]byte(""),
-		[]byte("Hello \nworld"),
-		[]byte("Hello \n\nworld\n"),
+		[]byte("Hello\nWorld"),
+		[]byte("Hello\nWorld\nAnother\nLine"),
 	}
 
 	err := createTestFiles(files, contents)
@@ -76,7 +76,7 @@ func TestLineCount(t *testing.T) {
 	}
 
 	os.Stdout = w
-	countBytes(files)
+	countLines(files)
 	w.Close()
 	os.Stdout = old
 

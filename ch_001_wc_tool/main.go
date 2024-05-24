@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
 	"os"
@@ -8,13 +9,18 @@ import (
 
 func main() {
 	var shouldCountBytes bool
+	var shouldCountLines bool
 
 	flag.BoolVar(&shouldCountBytes, "c", false, "Counts number of bytes in a file")
+	flag.BoolVar(&shouldCountLines, "l", false, "Counts number of line in a file")
 	flag.Parse()
 	files := flag.Args()
 
 	if shouldCountBytes {
 		countBytes(files)
+	}
+	if shouldCountLines {
+		countLines(files)
 	}
 }
 
@@ -38,13 +44,19 @@ func countBytes(files []string) error {
 func countLines(files []string) error {
 	var total int
 	for _, f := range files {
-		bytes, err := os.ReadFile(f)
+
+		fh, err := os.Open(f)
 		if err != nil {
 			panic(err)
 		}
-		n := len(bytes)
-		total += n
-		fmt.Println(fmt.Sprintf("%d %s", n, f))
+		sc := bufio.NewScanner(fh)
+		line := 0
+		for sc.Scan() {
+			line++
+		}
+
+		total += line
+		fmt.Println(fmt.Sprintf("%d %s", line, f))
 	}
 	if len(files) > 1 {
 		fmt.Println(fmt.Sprintf("%d total", total))
