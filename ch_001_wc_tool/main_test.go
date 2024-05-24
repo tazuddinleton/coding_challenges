@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"testing"
 )
@@ -100,6 +99,52 @@ func TestLineCount(t *testing.T) {
 	defer removeTestFiles(files)
 }
 
+func TestWordCount(t *testing.T) {
+	files := []string{"emptyfile.txt", "testfile1.txt", "testfile2.txt"}
+	contents := [][]byte{
+		[]byte(""),
+		[]byte("Hello World  "),
+		[]byte("Hello World\n\nAnother    Line"),
+	}
+
+	err := createTestFiles(files, contents)
+	if err != nil {
+		fmt.Println(err)
+		t.Fail()
+	}
+
+	old := os.Stdout
+	r, w, err := os.Pipe()
+	if err != nil {
+		fmt.Println(err)
+		t.Fail()
+	}
+
+	os.Stdout = w
+	countWords(files)
+	w.Close()
+	os.Stdout = old
+
+	out, err := io.ReadAll(r)
+
+	expected := fmt.Sprintf(
+		"%d %s\n%d %s\n%d %s\n%d total\n",
+		0,
+		files[0],
+		2,
+		files[1],
+		4,
+		files[2],
+		6,
+	)
+	if string(out) != expected {
+		t.Errorf("expected: %s\n\nactual: %s", expected, string(out))
+		t.Fail()
+	}
+
+	defer removeTestFiles(files)
+}
+
 func removeTestFiles(files []string) {
 	for _, f := range files {
 		os.Remove(f)
@@ -112,7 +157,7 @@ func createTestFiles(files []string, contents [][]byte) error {
 	}
 
 	for i, f := range files {
-		err := ioutil.WriteFile(f, contents[i], 0644)
+		err := os.WriteFile(f, contents[i], 0644)
 		if err != nil {
 			fmt.Println("Can not create file")
 			return err

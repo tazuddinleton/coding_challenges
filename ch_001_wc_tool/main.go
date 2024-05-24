@@ -63,3 +63,36 @@ func countLines(files []string) error {
 	}
 	return nil
 }
+
+func countWords(files []string) error {
+	total := 0
+	for _, f := range files {
+
+		content, err := os.ReadFile(f)
+		if err != nil {
+			panic(err)
+		}
+		wc := 0
+		var s bool
+		var pr bool
+		for _, b := range content {
+			if (b == 10 || b == 32) && !pr{
+				wc++
+				pr = true
+			} else {
+				s = true
+				pr = false
+			}
+		}
+
+		if s {
+			wc++
+		}
+		total += wc
+		fmt.Println(fmt.Sprintf("%d %s", wc, f))
+	}
+	if len(files) > 1 {
+		fmt.Println(fmt.Sprintf("%d total", total))
+	}
+	return nil
+}
