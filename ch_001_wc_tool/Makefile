@@ -1,5 +1,5 @@
 clean:
-	rm ./bin/ccwc
+	rm -f ./bin/ccwc
 
 build: clean
 	go build -o ./bin/ccwc
